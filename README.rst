@@ -28,29 +28,52 @@ Help Info
 2. Tbla(tablechar): the char used for table drawing, default is ``#``
 
 ============
-Example
+Examples
 ============
 ::
 
-    cmtprinter ./cmtprinter/core.py --desc "The entry module for comment printer"
+    $ cmtprinter ./cmtprinter/core.py --desc "The core module for cmtprinter"
     ###############################################################################
     #                              Filename: core.py                              #
-    #              Description: The entry module for comment printer              #
-    #                      Created Time: 2021-10-20 15:21:06                      #
+    #                 Description: The core module for cmtprinter                 #
+    #                      Created Time: 2021-10-21 14:33:47                      #
     #                             Created By: ssfdust                             #
-    #                  Last Moidified Time: 2021-10-20 15:21:06                   #
+    #                  Last Moidified Time: 2021-10-21 14:33:47                   #
     #                         Last Moidified By: ssfdust                          #
     ###############################################################################
     # Change Log:                                                                 #
     #   - Initilize.                                                              #
-    ###############################################################################
+    #-----------------------------------------------------------------------------#
     # Functions:                                                                  #
     #   - parse_ast_tree: extract functions and classes from python script.       #
     #   - dump_module_nodes: convert the ModuleNodes class into a dictionary,     #
     #     which means dumping.                                                    #
     #   - print_table: Print the information from the dumped node json.           #
-    ###############################################################################
+    #-----------------------------------------------------------------------------#
     # Classes:                                                                    #
     #   - DumpedModuleNodes: A typed dict class for dumped ModuleNodes class.     #
     #   - ModuleNodes: The data class with parsed ast tree data.                  #
-    ###############################################################################
+    #-----------------------------------------------------------------------------#
+
+    $ cmtprinter ./cmtprinter/core.py --desc "The core module for cmtprinter" --tablechar '*'
+    *******************************************************************************
+    *                              Filename: core.py                              *
+    *                 Description: The core module for cmtprinter                 *
+    *                      Created Time: 2021-10-21 14:33:47                      *
+    *                             Created By: ssfdust                             *
+    *                  Last Moidified Time: 2021-10-21 14:33:47                   *
+    *                         Last Moidified By: ssfdust                          *
+    *******************************************************************************
+    * Change Log:                                                                 *
+    *   - Initilize.                                                              *
+    *-----------------------------------------------------------------------------*
+    * Functions:                                                                  *
+    *   - parse_ast_tree: extract functions and classes from python script.       *
+    *   - dump_module_nodes: convert the ModuleNodes class into a dictionary,     *
+    *     which means dumping.                                                    *
+    *   - print_table: Print the information from the dumped node json.           *
+    *-----------------------------------------------------------------------------*
+    * Classes:                                                                    *
+    *   - DumpedModuleNodes: A typed dict class for dumped ModuleNodes class.     *
+    *   - ModuleNodes: The data class with parsed ast tree data.                  *
+    *-----------------------------------------------------------------------------*

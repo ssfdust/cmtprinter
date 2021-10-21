@@ -13,27 +13,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """
-###############################################################################
-#                              Filename: core.py                              #
-#              Description: The core module for comment printer               #
-#                      Created Time: 2021-10-20 15:20:45                      #
-#                             Created By: ssfdust                             #
-#                  Last Moidified Time: 2021-10-20 15:20:45                   #
-#                         Last Moidified By: ssfdust                          #
-###############################################################################
-# Change Log:                                                                 #
-#   - Initilize.                                                              #
-###############################################################################
-# Functions:                                                                  #
-#   - parse_ast_tree: extract functions and classes from python script.       #
-#   - dump_module_nodes: convert the ModuleNodes class into a dictionary,     #
-#     which means dumping.                                                    #
-#   - print_table: Print the information from the dumped node json.           #
-###############################################################################
-# Classes:                                                                    #
-#   - DumpedModuleNodes: A typed dict class for dumped ModuleNodes class.     #
-#   - ModuleNodes: The data class with parsed ast tree data.                  #
-###############################################################################
+*******************************************************************************
+*                              Filename: core.py                              *
+*                 Description: The core module for cmtprinter                 *
+*                      Created Time: 2021-10-21 14:33:47                      *
+*                             Created By: ssfdust                             *
+*                  Last Moidified Time: 2021-10-21 14:33:47                   *
+*                         Last Moidified By: ssfdust                          *
+*******************************************************************************
+* Change Log:                                                                 *
+*   - Initilize.                                                              *
+*-----------------------------------------------------------------------------*
+* Functions:                                                                  *
+*   - parse_ast_tree: extract functions and classes from python script.       *
+*   - dump_module_nodes: convert the ModuleNodes class into a dictionary,     *
+*     which means dumping.                                                    *
+*   - print_table: Print the information from the dumped node json.           *
+*-----------------------------------------------------------------------------*
+* Classes:                                                                    *
+*   - DumpedModuleNodes: A typed dict class for dumped ModuleNodes class.     *
+*   - ModuleNodes: The data class with parsed ast tree data.                  *
+*-----------------------------------------------------------------------------*
 """
 import ast
 import os
@@ -54,6 +54,8 @@ class DumpedModuleNodes(TypedDict):
         filename: the filename of source file.
         functions: the public function names in source file.
         classes: the public class names in source file.
+        created: the created time of the source file
+        modified: the modified time of the source file
     """
 
     filename: str
@@ -105,34 +107,26 @@ def parse_ast_tree(py_script_path: Path) -> ModuleNodes:
     for node in ast.walk(astmodule):
         ast_dumps = ast.dump(node)
         if ast_dumps.startswith("ClassDef"):
-            docstring = _get_the_first_not_empty_line(
-                ast.get_docstring(node)
-            )
-            desc = "{}: {}".format(node.name, docstring)
-            if not node.name.startswith("_"):
-                desc = f"{desc:70}"
-                for i in cjkwrap.wrap(
-                    desc,
-                    width=70,
-                    initial_indent="- ",
-                    subsequent_indent="  ",
-                ):
-                    module_nodes.classes.append(i)
+            _generate_def_item(node, module_nodes.classes)
         elif ast_dumps.startswith("FunctionDef"):
-            docstring = _get_the_first_not_empty_line(
-                ast.get_docstring(node)
-            )
-            desc = "{}: {}".format(node.name, docstring)
-            if not node.name.startswith("_"):
-                desc = f"{desc:70}"
-                for i in cjkwrap.wrap(
-                    desc,
-                    width=70,
-                    initial_indent="- ",
-                    subsequent_indent="  ",
-                ):
-                    module_nodes.funces.append(i)
+            _generate_def_item(node, module_nodes.funces)
     return module_nodes
+
+
+def _generate_def_item(node: ast.AST, store: list[str]) -> None:
+    docstring = _get_the_first_not_empty_line(
+        ast.get_docstring(node)
+    )
+    desc = "{}: {}".format(node.name, docstring)
+    if not node.name.startswith("_"):
+        desc = f"{desc:70}"
+        for i in cjkwrap.wrap(
+            desc,
+            width=70,
+            initial_indent="- ",
+            subsequent_indent="  ",
+        ):
+            store.append(i)
 
 
 def _get_the_first_not_empty_line(data: Optional[str]) -> str:
@@ -175,11 +169,13 @@ def dump_module_nodes(
     return node_json
 
 
-def print_table(node_json: DumpedModuleNodes, desc: str, mode: str) -> None:
+def print_table(node_json: DumpedModuleNodes, desc: str, tablechar: str) -> None:
     """Print the information from the dumped node json.
 
     Args:
         node_json: The dumped dictionary corresponding to ModuleNodes class.
+        desc: the short description for the module.
+        tablechar: the character used for drawing a table.
     """
     data = [
         [node_json[key].strip()]
@@ -204,6 +200,19 @@ def print_table(node_json: DumpedModuleNodes, desc: str, mode: str) -> None:
 
     table = Texttable()
     table.set_cols_width([75])
-    table.set_chars([mode] * 4)
+    table.set_chars(['-'] + [tablechar] * 3)
     table.add_rows(data)
-    print(table.draw())
+    table_text = _redraw_the_header_line(table.draw(), tablechar)
+    print(table_text)
+
+
+def _redraw_the_header_line(table_text: str, tablechar: str) -> str:
+    linecnt = 0
+    new_table_text_list = []
+    for line in table_text.splitlines():
+        if line:
+            linecnt += 1
+            if linecnt == 1:
+                line = tablechar * len(line)
+            new_table_text_list.append(line)
+    return "\n".join(new_table_text_list)

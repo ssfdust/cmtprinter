@@ -13,20 +13,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """
-###############################################################################
-#                              Filename: main.py                              #
-#              Description: The entry module for comment printer              #
-#                      Created Time: 2021-10-20 15:24:59                      #
-#                             Created By: ssfdust                             #
-#                  Last Moidified Time: 2021-10-20 15:24:59                   #
-#                         Last Moidified By: ssfdust                          #
-###############################################################################
-# Change Log:                                                                 #
-#   - Initilize.                                                              #
-###############################################################################
-# Functions:                                                                  #
-#   - main: The program main entry                                            #
-###############################################################################
+*******************************************************************************
+*                              Filename: main.py                              *
+*                Description: The entry module for cmtprinter                 *
+*                      Created Time: 2021-10-20 15:25:19                      *
+*                             Created By: ssfdust                             *
+*                  Last Moidified Time: 2021-10-20 15:25:19                   *
+*                         Last Moidified By: ssfdust                          *
+*******************************************************************************
+* Change Log:                                                                 *
+*   - Initilize.                                                              *
+*-----------------------------------------------------------------------------*
+* Functions:                                                                  *
+*   - main: The program main entry                                            *
+*-----------------------------------------------------------------------------*
 """
 from argparse import ArgumentParser
 from pathlib import Path
@@ -38,8 +38,12 @@ def main():
     """The program main entry"""
     parser = ArgumentParser()
     parser.add_argument("filepath", help="the target python script path")
-    parser.add_argument("--desc", help="the module description.", default="")
-    parser.add_argument("--tablechar", help="the char used for table drawing.", default="#")
+    parser.add_argument(
+        "--desc", help="the module description.", default=""
+    )
+    parser.add_argument(
+        "--tablechar", help="the char used for table drawing.", default="#"
+    )
     args = parser.parse_args()
     filepath = Path(args.filepath).expanduser().absolute()
     module_nodes = parse_ast_tree(filepath)
